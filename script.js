@@ -1,73 +1,61 @@
-// Getting computer answer as Number 1 2 or 3
 function getComputerChoice() {
-  let randomNum = Math.floor(Math.random() * 3) + 1;
-  let Choice = "";
-
-  if (randomNum === 1) {
-    Choice = "Rock";
-  } else if (randomNum === 2) {
-    Choice = "Paper";
-  } else if (randomNum === 3) {
-    Choice = "Scissor";
-  }
-  return Choice.toLowerCase();
+  const choices = ["rock", "paper", "scissor"];
+  const randomIndex = Math.floor(Math.random() * 3);
+  return choices[randomIndex];
 }
 
 function getHumanChoice() {
-  let input = prompt("Choose Rock, Paper, or Scissors");
+  const input = prompt("Choose Rock, Paper, or Scissors");
+  if (!input) return null; // Return null if canceled or empty
   
-  // Guard clause in case user clicks 'Cancel'
-  if (!input) return ""; 
-  
-  let Choice = input.toLowerCase();
-
-  // Fix typo and directly return the string value
-  if (Choice === "scissors") {
+  const choice = input.toLowerCase().trim();
+  if (choice === "scissors") {
     return "scissor";
   }
-  return Choice;
+  return choice;
 }
 
 function playGame() {
-  let HumanScore = 0;
-  let ComputerScore = 0;
-  let tie = 0;
+  let humanScore = 0;
+  let computerScore = 0;
+  let ties = 0;
 
-  // Evaluate who Wins and log points
-  function playRound(ComputerChoice, HumanChoice) {
-    if (ComputerChoice === "rock" && HumanChoice === "paper") {
-      HumanScore++;
-      console.log(`you win ${HumanChoice} beats ${ComputerChoice}`);
-    } else if (ComputerChoice === "paper" && HumanChoice === "scissor") {
-      HumanScore++;
-      console.log(`you win ${HumanChoice} beats ${ComputerChoice}`);
-    } else if (ComputerChoice === "scissor" && HumanChoice === "rock") {
-      HumanScore++;
-      console.log(`you win ${HumanChoice} beats ${ComputerChoice}`);
-    } else if (ComputerChoice === "paper" && HumanChoice === "rock") {
-      ComputerScore++;
-      console.log(`you lose ${ComputerChoice} beats ${HumanChoice} He's too Good`);
-    } else if (ComputerChoice === "rock" && HumanChoice === "scissor") {
-      ComputerScore++;
-      console.log(`you lose ${ComputerChoice} beats ${HumanChoice} He's too Good`);
-    } else if (ComputerChoice === "scissor" && HumanChoice === "paper") {
-      ComputerScore++;
-      console.log(`you lose ${ComputerChoice} beats ${HumanChoice} He's too Good`);
+  function playRound(computerChoice, humanChoice) {
+    if (!humanChoice) {
+      console.log("Round skipped (no valid input).");
+      return;
+    }
+
+    if (computerChoice === humanChoice) {
+      ties++;
+      console.log(`It's a tie! Both chose ${humanChoice} (:`);
+    } else if (
+      (humanChoice === "paper" && computerChoice === "rock") ||
+      (humanChoice === "scissor" && computerChoice === "paper") ||
+      (humanChoice === "rock" && computerChoice === "scissor")
+    ) {
+      humanScore++;
+      console.log(`You win! ${humanChoice} beats ${computerChoice}`);
     } else {
-      tie++;
-      console.log(`you tie ${ComputerChoice} ${HumanChoice} (:`);
+      computerScore++;
+      console.log(`You lose! ${computerChoice} beats ${humanChoice}. He's too good!`);
     }
   }
 
-  // Play 5 distinct rounds by getting new choices each time
   for (let i = 0; i < 5; i++) {
-    let currentComputer = getComputerChoice();
-    let currentHuman = getHumanChoice();
+    const currentComputer = getComputerChoice();
+    const currentHuman = getHumanChoice();
+    
+    // Stop the game loop if user cancels completely
+    if (currentHuman === null) {
+      console.log("Game canceled by user.");
+      break;
+    }
+    
     playRound(currentComputer, currentHuman);
   }
-  
-  // Log the final scores at the end of the game
-  console.log(`Final Scores -> You: ${HumanScore} | Computer: ${ComputerScore} | Ties: ${tie}`);
+
+  console.log(`Final Scores -> You: ${humanScore} | Computer: ${computerScore} | Ties: ${ties}`);
 }
 
 playGame();
